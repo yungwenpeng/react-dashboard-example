@@ -6,6 +6,7 @@ import HomeIcon from '@material-ui/icons/Home';
 import { Link } from 'react-router-dom';
 
 import MenuIcon from "@material-ui/icons/Menu";
+import DashboardIcon from '@material-ui/icons/Dashboard';
 
 const useStyles = makeStyles(()=>({
     link:{
@@ -33,6 +34,15 @@ function DrawerComponent() {
             <ListItemIcon><HomeIcon/></ListItemIcon>
             <ListItemText>
               <Link to="/" className={classes.link}>Home</Link>
+            </ListItemText>
+          </ListItem>
+          <Divider/>
+      </List>
+      <List>
+          <ListItem onClick={() => setOpenDrawer(false)}>
+            <ListItemIcon><DashboardIcon/></ListItemIcon>
+            <ListItemText>
+              <Link to="/dashboard" className={classes.link}>Dashboard</Link>
             </ListItemText>
           </ListItem>
           <Divider/>

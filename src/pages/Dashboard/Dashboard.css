@@ -1,0 +1,27 @@
+.dashboard-header {
+    background-color: #08fff3;
+    min-height: 8vh;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: center;
+    font-size: calc(12px + 2vmin);
+    color: rgb(43, 41, 41);
+}
+
+.dashboard-formControl {
+    position: relative;
+    padding: 10px;
+    min-width: 150px;
+    max-width: 250px;
+}
+
+.dashboard-canvas {
+    background-color: #fafafa;
+    color: white;
+    position: relative;
+    padding: 10px;
+    width: 100%;
+    height: 30%;
+}
