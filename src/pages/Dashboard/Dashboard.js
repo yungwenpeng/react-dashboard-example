@@ -1,7 +1,11 @@
 import './Dashboard.css';
 import { Typography, InputLabel, FormControl, Select, MenuItem } from "@material-ui/core";
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Chart, registerables } from 'chart.js';
+// Firebase deps
+import { getFirestore, collection, query, orderBy, limit, onSnapshot } from "firebase/firestore";
+import { initializeApp } from "firebase/app";
+import { firebaseConfig } from '../../environment/environment';
 Chart.register(...registerables);
 
 const intervalOptions = [
@@ -32,60 +36,60 @@ let dataSetup = {
   ]
 };
 
-function generateRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1) + min);
-};
-
-function addDataToChart(chart, limit, label, temperature, humidity) {
-  //console.log('temperature - ' + temperature + ',humidity - ' + humidity);
-  chart.data.labels.push(label);
-  chart.data.datasets.forEach((dataset) => {
-    if ((dataset.label).includes('Temperature')) {
-      dataset.data.push(temperature);
-    } else {
-      dataset.data.push(humidity);
-    }
-  });
-
-  if (chart.data.labels.length > limit) {
-    chart.data.labels.splice(0, chart.data.labels.length - limit);
-  }
-  chart.data.datasets.forEach((dataset) => {
-    console.log('length: ' + dataset.data.length + ', ' + dataset.label + ':' + dataset.data);
-    if (dataset.data.length > limit) {
-      dataset.data.splice(0, dataset.data.length - limit);
-      //dataset.data.shift();
-      console.log('length: ' + dataset.data.length + ', ' + dataset.label + ':' + dataset.data);
-    }
-    //console.log('dataset: ' + JSON.stringify(dataset, null, 4));
-  });
-};
-
 
 function Dashboard() {
 
   const [lastestTemperatureReading, setlastestTemperatureData] = useState();
   const [lastestHumidityReading, setlastestHumidityData] = useState();
-  const intervalId = useRef();
+  const [lastestTimestampReading, setlastestTimestampData] = useState();
 
-  const [intervalOption, setIntervalOption] = useState();
+  const [intervalOption, setIntervalOption] = useState('50');
   const handleSelectChange = (e) => {
-    const value = e.target.value;
-    setIntervalOption(value);
+    //const value = e.target.value;
+    setIntervalOption(e.target.value);
     //console.log('The Interval is : ', value);
   };
 
+  const checkTimestamp = useCallback(
+    () => {
+      console.log('intervalOption, ', intervalOption);
+    }
+  );
+
+  function addDataToChart(chart, limit, label, temperature, humidity) {
+    console.log('intervalOption', intervalOption);
+    //console.log('temperature - ' + temperature + ',humidity - ' + humidity);
+    chart.data.labels.push(label);
+    chart.data.datasets.forEach((dataset) => {
+      if ((dataset.label).includes('Temperature')) {
+        dataset.data.push(temperature);
+      } else {
+        dataset.data.push(humidity);
+      }
+    });
+    chart.update();
+
+    if (chart.data.labels.length > limit) {
+      chart.data.labels.splice(0, chart.data.labels.length - limit);
+    }
+    chart.data.datasets.forEach((dataset) => {
+      console.log('limit:',limit, 'length: ' + dataset.data.length + ', ' + dataset.label + ':' + dataset.data);
+      if (dataset.data.length > limit) {
+        dataset.data.splice(0, dataset.data.length - limit);
+        //dataset.data.shift();
+        console.log('limit:',limit, 'length: ' + dataset.data.length + ', ' + dataset.label + ':' + dataset.data);
+      }
+      //console.log('dataset: ' + JSON.stringify(dataset, null, 4));
+    });
+  };
+
+  // Initialize Firebase
+  initializeApp(firebaseConfig);
 
   useEffect(() => {
+
     //if (typeof chartTimeseries !== "undefined") chartTimeseries.destroy();
 
-    function fetchmeasurements(){
-      setlastestTemperatureData(generateRandomInt(10, 50));
-      setlastestHumidityData(generateRandomInt(40, 70));
-    };
-    
     const canvasTimeseries = document.getElementById('chartTimeseries');
     chartTimeseries = new Chart(canvasTimeseries, {
       type: 'line',
@@ -95,24 +99,34 @@ function Dashboard() {
       }
     });
 
-    intervalId.current = setInterval(() => {
-      let d = new Date();
-      let timestamp = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-      console.log("datatime: " + timestamp);
-      fetchmeasurements();
-      if (typeof lastestTemperatureReading !== "undefined" && 
-          typeof lastestHumidityReading !== "undefined") {
-        addDataToChart(chartTimeseries, intervalOption, timestamp, 
-            lastestTemperatureReading, lastestHumidityReading);
-        chartTimeseries.update();
-      };
-    }, 1000);
+    let documentPath = '### YOUR PATH ###';
+    const db = getFirestore();
+    const measurementsRef = collection(db, documentPath);
+    let measurementsDoc = query(measurementsRef, orderBy("timestamp", "desc"), limit(1));
+
+    const unsubscribe = onSnapshot(measurementsDoc, (querySnapshot) => {
+      querySnapshot.docChanges().forEach((change) => {
+        if (change.type === "added") {
+            console.log("New data: ", change.doc.data(), '  data-id: ', change.doc.id, lastestTimestampReading);
+            if(lastestTimestampReading !== change.doc.id){
+              let jsonTmp = JSON.parse(JSON.stringify(change.doc.data()))
+              const d = new Date(jsonTmp['timestamp'] * 1000);
+              let timestamp = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+              //console.log('latestMeasurement: ', change.doc.id, " => ", timestamp, ", temperature:", jsonTmp['temperature'], ", humidity:", jsonTmp['humidity']);
+              addDataToChart(chartTimeseries, intervalOption, timestamp, jsonTmp['temperature'], jsonTmp['humidity']);
+              setlastestTimestampData(value => value = change.doc.id);
+              setlastestTemperatureData(value => value = jsonTmp['temperature']);
+              setlastestHumidityData(value => value = jsonTmp['humidity']);
+            };
+        };
+      });
+    });
 
     return () => {
       chartTimeseries.destroy();
-      clearInterval(intervalId.current);
+      unsubscribe();
     }
-  });
+  }, [intervalOption]);
 
   return (
     <>

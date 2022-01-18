@@ -70,8 +70,15 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)  
   
 ## Others  
-MUI [Components](https://mui.com/components/) : [Drawer](https://mui.com/components/drawers/), [Material icons](https://mui.com/components/material-icons/), [Select](https://mui.com/components/selects/), [Select API](https://mui.com/zh/api/select/)  
-Chart.js : [Line Chart](https://www.chartjs.org/docs/latest/samples/line/line.html#line-chart)  
+* MUI [Components](https://mui.com/components/) : [Drawer](https://mui.com/components/drawers/), [Material icons](https://mui.com/components/material-icons/), [Select](https://mui.com/components/selects/), [Select API](https://mui.com/zh/api/select/)  
+* Chart.js : [Line Chart](https://www.chartjs.org/docs/latest/samples/line/line.html#line-chart)  
+* Cloud Firestore : [Get started](https://firebase.google.com/docs/firestore/quickstart), [View changes between snapshots](https://firebase.google.com/docs/firestore/query-data/listen#view_changes_between_snapshots), [Order and limit data](https://firebase.google.com/docs/firestore/query-data/order-limit-data#order_and_limit_data)  
+  
+## How to use  
+  * Copy the config object snippet from the Firebase SDK snippet pane to src/environment/environment.js  
+  * change documentPath to your path in src/pages/Dashboard/Dashboard.js  
+  $ npm install  
+  $ npm start  
   
 ## Demo:  
 ![react-dashboard-example](react-dashboard-example.gif)  

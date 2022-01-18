@@ -22,6 +22,7 @@
     color: white;
     position: relative;
     padding: 10px;
-    width: 100%;
+    width: 90%;
     height: 30%;
+    max-height: 600px;
 }
