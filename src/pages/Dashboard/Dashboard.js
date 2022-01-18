@@ -32,49 +32,48 @@ let dataSetup = {
   ]
 };
 
-function generateRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1) + min);
-};
-
-function addDataToChart(chart, limit, label, temperature, humidity) {
-  //console.log('temperature - ' + temperature + ',humidity - ' + humidity);
-  chart.data.labels.push(label);
-  chart.data.datasets.forEach((dataset) => {
-    if ((dataset.label).includes('Temperature')) {
-      dataset.data.push(temperature);
-    } else {
-      dataset.data.push(humidity);
-    }
-  });
-
-  if (chart.data.labels.length > limit) {
-    chart.data.labels.splice(0, chart.data.labels.length - limit);
-  }
-  chart.data.datasets.forEach((dataset) => {
-    console.log('length: ' + dataset.data.length + ', ' + dataset.label + ':' + dataset.data);
-    if (dataset.data.length > limit) {
-      dataset.data.splice(0, dataset.data.length - limit);
-      //dataset.data.shift();
-      console.log('length: ' + dataset.data.length + ', ' + dataset.label + ':' + dataset.data);
-    }
-    //console.log('dataset: ' + JSON.stringify(dataset, null, 4));
-  });
-};
-
-
 function Dashboard() {
 
   const [lastestTemperatureReading, setlastestTemperatureData] = useState();
   const [lastestHumidityReading, setlastestHumidityData] = useState();
   const intervalId = useRef();
 
-  const [intervalOption, setIntervalOption] = useState();
+  const [intervalOption, setIntervalOption] = useState('100');
   const handleSelectChange = (e) => {
     const value = e.target.value;
     setIntervalOption(value);
     //console.log('The Interval is : ', value);
+  };
+
+  function generateRandomInt(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  };
+
+  function addDataToChart(chart, limit, label, temperature, humidity) {
+    //console.log('temperature - ' + temperature + ',humidity - ' + humidity);
+    chart.data.labels.push(label);
+    chart.data.datasets.forEach((dataset) => {
+      if ((dataset.label).includes('Temperature')) {
+        dataset.data.push(temperature);
+      } else {
+        dataset.data.push(humidity);
+      }
+    });
+
+    if (chart.data.labels.length > limit) {
+      chart.data.labels.splice(0, chart.data.labels.length - limit);
+    }
+    chart.data.datasets.forEach((dataset) => {
+      console.log('length: ' + dataset.data.length + ', ' + dataset.label + ':' + dataset.data);
+      if (dataset.data.length > limit) {
+        dataset.data.splice(0, dataset.data.length - limit);
+        //dataset.data.shift();
+        console.log('length: ' + dataset.data.length + ', ' + dataset.label + ':' + dataset.data);
+      }
+      //console.log('dataset: ' + JSON.stringify(dataset, null, 4));
+    });
   };
 
 
