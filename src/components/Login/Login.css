@@ -1,0 +1,76 @@
+.login-header {
+    background-color: #f0f0f0;
+    min-height: 10vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: rgb(43, 41, 41);
+}
+
+.card {
+    height: 70%;
+    width: 40%;
+    background-color: #fff;
+    position: relative;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    font-family: 'Poppins', sans-serif;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px;
+}
+
+.input-text {
+    position: relative;
+    margin-top: 10px;
+    width: 100%;
+}
+
+input[type="text"] {
+    height: 45px;
+    width: 100%;
+    border: none;
+    border-radius: 9px;
+    border: 1px solid #e0e3e9;
+    padding: 0 10px;
+    padding-left: 10px;
+    outline: 10;
+    font-size: 15px
+}
+
+input[type="password"] {
+    height: 45px;
+    width: 100%;
+    border: none;
+    border-radius: 9px;
+    border: 1px solid #e0e3e9;
+    padding: 0 10px;
+    padding-left: 20px;
+    padding-right: 27px;
+    outline: 10
+}
+
+.buttons button {
+    height: 45px;
+    width: 95%;
+    border: none;
+    background-color: #267fff;
+    border-radius: 9px;
+    font-size: 12px;
+    outline: 0;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.5s;
+    margin: 20px;
+}
+
+.buttons button:hover {
+    background-color: #083c87;
+}
+
+.login-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

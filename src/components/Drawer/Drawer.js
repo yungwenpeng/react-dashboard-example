@@ -7,8 +7,17 @@ import { Link } from 'react-router-dom';
 
 import MenuIcon from "@material-ui/icons/Menu";
 import DashboardIcon from '@material-ui/icons/Dashboard';
+import useToken from '../../useToken';
+import jwt_decode from "jwt-decode";
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const useStyles = makeStyles(()=>({
+    welcome:{
+      color: "blue",
+      fontSize: "18px",
+      textAlign: 'center',
+      padding: '10px'
+    },
     link:{
         textDecoration:"none",
         color: "black",
@@ -22,6 +31,18 @@ const useStyles = makeStyles(()=>({
 function DrawerComponent() {
   const classes = useStyles();
   const [openDrawer, setOpenDrawer] = useState(false);
+  const { token } = useToken();
+  let decoded = jwt_decode(token);
+  const signoutSubmit = (e) => {
+    e.preventDefault();
+    let n = sessionStorage.length;
+    while(n--) {
+      let key = sessionStorage.key(n);
+      sessionStorage.removeItem(key);
+    }
+    window.location.reload(false);
+  }
+
 
   return (
     <>
@@ -29,6 +50,7 @@ function DrawerComponent() {
         open={openDrawer}
         onClose={() => setOpenDrawer(false)}
       >
+        <i className={classes.welcome}> Hi, {decoded['name'].slice(0, decoded['name'].lastIndexOf("@"))}</i>
         <List>
           <ListItem onClick={() => setOpenDrawer(false)}>
             <ListItemIcon><HomeIcon/></ListItemIcon>
@@ -37,8 +59,8 @@ function DrawerComponent() {
             </ListItemText>
           </ListItem>
           <Divider/>
-      </List>
-      <List>
+        </List>
+        <List>
           <ListItem onClick={() => setOpenDrawer(false)}>
             <ListItemIcon><DashboardIcon/></ListItemIcon>
             <ListItemText>
@@ -46,12 +68,25 @@ function DrawerComponent() {
             </ListItemText>
           </ListItem>
           <Divider/>
-      </List>
-    </Drawer>
-    <IconButton onClick={() => setOpenDrawer(!openDrawer)}className={classes.icon}>
-      <MenuIcon />
-    </IconButton>
-  </>
-);
+        </List>
+        {
+          (token) ? (
+            <List>
+              <ListItem onClick={() => setOpenDrawer(false)}>
+                <ListItemIcon><LogoutIcon/></ListItemIcon>
+                <ListItemText onClick={signoutSubmit}>
+                  <Link to="/" className={classes.link}>Sign out</Link>
+                </ListItemText>
+              </ListItem>
+          <Divider/>
+            </List>
+          ) : ('')
+        }
+      </Drawer>
+      <IconButton onClick={() => setOpenDrawer(!openDrawer)} className={classes.icon}>
+        <MenuIcon />
+      </IconButton>
+    </>
+  );
 }
 export default DrawerComponent;
