@@ -2,6 +2,9 @@ import './Dashboard.css';
 import { Typography, InputLabel, FormControl, Select, MenuItem } from "@material-ui/core";
 import { useEffect, useState, useRef } from 'react';
 import { Chart, registerables } from 'chart.js';
+import useToken from '../../useToken';
+import jwt_decode from "jwt-decode";
+import { api_url, websocket_url } from '../../environment/environment'
 Chart.register(...registerables);
 
 const intervalOptions = [
@@ -32,26 +35,83 @@ let dataSetup = {
   ]
 };
 
+let webSocket;
+
 function Dashboard() {
 
   const [lastestTemperatureReading, setlastestTemperatureData] = useState();
   const [lastestHumidityReading, setlastestHumidityData] = useState();
-  const intervalId = useRef();
 
   const [intervalOption, setIntervalOption] = useState('100');
   const handleSelectChange = (e) => {
     const value = e.target.value;
     setIntervalOption(value);
+    if (typeof webSocket !== 'undefined') { webSocket.close(); }
+    if (typeof deviceEntryId !== 'undefined') { fetchTelemetry(value); }
     //console.log('The Interval is : ', value);
   };
 
-  function generateRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1) + min);
+  const { token } = useToken();
+  const [deviceInfos, setDeviceInfos] = useState([]);
+  const [deviceEntryId, setDeviceEntryId] = useState();
+  const isMounted = useRef(false);
+  const handleSelectDeviceChange = (e) => {
+    const value = e.target.value;
+    isMounted.current = true;
+    setDeviceEntryId(value);
+    console.log('The Device EntryId is : ', value);
   };
 
+  function fetchTelemetry(limit) {
+    if (deviceInfos.length === 0) return;
+
+    let fetchTelemetryUrl = websocket_url + "/ws/plugins/telemetry?token=" + token;
+    //console.log('fetchTelemetryUrl:', fetchTelemetryUrl);
+    console.log('fetchTelemetry - isMounted:', isMounted.current);
+    
+    webSocket = new WebSocket(fetchTelemetryUrl);
+    webSocket.onopen = function () {
+      let object = {
+        tsSubCmds: [{
+          entityType: "DEVICE",
+          entityId: deviceEntryId,
+          scope: "LATEST_TELEMETRY",
+          cmdId: 10
+        }],
+        historyCmds: [],
+        attrSubCmds: []
+      };
+      let data = JSON.stringify(object);
+      webSocket.send(data);
+      console.log("Message is sent: " + data);
+    };
+    webSocket.onmessage = function (event) {
+      let received_msg = JSON.stringify(JSON.parse(event.data).data);
+      let timestamp = JSON.stringify(JSON.parse(received_msg).temperature);
+      //console.log("Message is received timestamp(before): " + timestamp);
+      timestamp = timestamp.replace('[[','').replace(']]', '').split(',')[0];
+      let d = new Date(timestamp * 1000 / 1000);
+      timestamp = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+      //console.log("Message is received timestamp(after): " + timestamp);
+      let humidity = JSON.stringify(JSON.parse(received_msg).humidity);
+      humidity = humidity.replace('[[','').replace(']]', '').replace('"','').split(',')[1].replace('"','');
+      let temperature = JSON.stringify(JSON.parse(received_msg).temperature);
+      temperature = temperature.replace('[[','').replace(']]', '').replace('"','').split(',')[1].replace('"','');
+      console.log("Message is received: " + received_msg);
+      console.log("Message is received interval:", limit, ", timestamp: ", timestamp, ", temperature:", temperature, ",humidity:", humidity);
+      setlastestTemperatureData(temperature);
+      setlastestHumidityData(humidity);
+      addDataToChart(chartTimeseries, limit, timestamp, temperature, humidity);
+    };
+    webSocket.onclose = function (event) {
+      console.log("Connection is closed!");
+    };
+  };
+
+
   function addDataToChart(chart, limit, label, temperature, humidity) {
+    //console.log('addDataToChart - intervalOption:', intervalOption, ', limit:', limit);
+    if (limit === 100 && intervalOption !== 100) limit = intervalOption;
     //console.log('temperature - ' + temperature + ',humidity - ' + humidity);
     chart.data.labels.push(label);
     chart.data.datasets.forEach((dataset) => {
@@ -61,6 +121,7 @@ function Dashboard() {
         dataset.data.push(humidity);
       }
     });
+    chart.update();
 
     if (chart.data.labels.length > limit) {
       chart.data.labels.splice(0, chart.data.labels.length - limit);
@@ -76,50 +137,95 @@ function Dashboard() {
     });
   };
 
+  useEffect(() => {
+    const fetchDeviceInfo = async () => {
+      let decoded = jwt_decode(token);
+      // For customer fetch device info API
+      let fetchDeviceUrl = api_url + 'customer/' + decoded['customerId']
+              +'/deviceInfos?pageSize=20&page=0'
+      // For tenant fetch device info API
+      //let fetchDeviceUrl = api_url + 'tenant/deviceInfos?pageSize=20&page=0';
+      //console.log('fetchDeviceUrl:', fetchDeviceUrl);
+      fetch(fetchDeviceUrl, {
+        method: 'GET',
+        headers: new Headers({
+          'Accept': 'application/json',
+          'X-Authorization': 'Bearer ' + token
+        })
+      })
+       .then(res => res.json())
+       .then(data => {
+         console.log('fetchDeviceInfo all:', data['data']);
+         let dInfos = [];
+         data['data'].forEach((device) => {
+           if (device['name'].includes('DHT11')) {
+            console.log('device:', device['name'], ' , id:', device['id']['id']);
+            dInfos.push({
+              "name": device['name'],
+              "entryId": device['id']['id'],
+              "entityType":device['id']['entityType']
+            });
+           }
+         });
+         console.log('fetchDeviceInfo :', dInfos);
+         setDeviceInfos(dInfos);
+       })
+       .catch(e => {
+         console.log('[Error] fetchDeviceInfo! Please retry it!\n', e);
+       });
+    };
+    fetchDeviceInfo();
+    return () => {
+    }
+  },[token]);
 
   useEffect(() => {
-    //if (typeof chartTimeseries !== "undefined") chartTimeseries.destroy();
+    if (isMounted.current) {
+      //if (typeof chartTimeseries !== "undefined") chartTimeseries.destroy();
 
-    function fetchmeasurements(){
-      setlastestTemperatureData(generateRandomInt(10, 50));
-      setlastestHumidityData(generateRandomInt(40, 70));
-    };
-    
-    const canvasTimeseries = document.getElementById('chartTimeseries');
-    chartTimeseries = new Chart(canvasTimeseries, {
-      type: 'line',
-      data: dataSetup,
-      options: {
-        scales: { y: { beginAtZero: true, display: true } }
-      }
-    });
-
-    intervalId.current = setInterval(() => {
-      let d = new Date();
-      let timestamp = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
-      console.log("datatime: " + timestamp);
-      fetchmeasurements();
-      if (typeof lastestTemperatureReading !== "undefined" && 
-          typeof lastestHumidityReading !== "undefined") {
-        addDataToChart(chartTimeseries, intervalOption, timestamp, 
-            lastestTemperatureReading, lastestHumidityReading);
-        chartTimeseries.update();
-      };
-    }, 1000);
-
-    return () => {
-      chartTimeseries.destroy();
-      clearInterval(intervalId.current);
+      const canvasTimeseries = document.getElementById('chartTimeseries');
+      chartTimeseries = new Chart(canvasTimeseries, {
+        type: 'line',
+        data: dataSetup,
+        options: {
+          scales: { y: { beginAtZero: true, display: true } }
+        }
+      });
+      fetchTelemetry(100);
     }
-  });
+    
+    return () => {
+      //console.log('The useEffect - destroy - isMounted:', isMounted.current, ', webSocket:', webSocket);
+      if (typeof chartTimeseries !== 'undefined') {
+        //console.log('The useEffect - chartTimeseries.destroy')
+        chartTimeseries.destroy();
+      }
+      if (typeof webSocket !== 'undefined') {
+        //console.log('The useEffect - webSocket.close')
+        webSocket.close();
+      }
+      setlastestTemperatureData('');
+      setlastestHumidityData('');
+    }
+  },[isMounted.current]);
 
   return (
     <>
       <header className="dashboard-header">
-        <Typography variant="h5">Current Temperature: {lastestTemperatureReading} °C,
-            Humidity: {lastestHumidityReading} %</Typography>
         <FormControl className='dashboard-formControl' fullWidth size='medium'>
-          <InputLabel id="select-label-id">Interval</InputLabel>
+          <InputLabel id="select-device">Select your device: </InputLabel>
+          <Select labelId="select-device-id" defaultValue="" onChange={handleSelectDeviceChange}>
+          {
+            (deviceInfos.length > 0) ? (
+              deviceInfos.map((d) => (
+                <MenuItem value={d.entryId} key={d.name}>{d.name}</MenuItem>
+              ))
+            ) : ('')
+          }
+          </Select>
+        </FormControl>
+        <FormControl className='dashboard-formControl' fullWidth size='medium'>
+          <InputLabel id="select-label-id">Interval (default 100)</InputLabel>
           <Select labelId="select-label-id" defaultValue=""
             onChange={handleSelectChange}
           >
@@ -129,7 +235,9 @@ function Dashboard() {
           </Select>
         </FormControl>
       </header>
-      <div>
+      <div className='dashboard-canvas-body'>
+        <Typography variant="h5">Current Temperature: {lastestTemperatureReading} °C,
+            Humidity: {lastestHumidityReading} %</Typography>
         <canvas className="dashboard-canvas" id="chartTimeseries"></canvas>
       </div>
     </>

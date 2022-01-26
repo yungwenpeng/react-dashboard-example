@@ -14,7 +14,7 @@ async function loginUser(credentials) {
   let login_data = '{"username":"' + credentials['username'] 
                             + '", "password":"'+ credentials['password'] + '"}'
 
-  return fetch(api_url + '/login', {
+  return fetch(api_url + 'auth/login', {
     method: 'POST',
     headers: new Headers({
       'Content-Type': 'application/json',

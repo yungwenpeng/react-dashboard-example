@@ -50,7 +50,7 @@ function DrawerComponent() {
         open={openDrawer}
         onClose={() => setOpenDrawer(false)}
       >
-        <i className={classes.welcome}> Hi, {decoded['name'].slice(0, decoded['name'].lastIndexOf("@"))}</i>
+        <i className={classes.welcome}> Hi, {decoded['sub'].slice(0, decoded['sub'].lastIndexOf("@"))}</i>
         <List>
           <ListItem onClick={() => setOpenDrawer(false)}>
             <ListItemIcon><HomeIcon/></ListItemIcon>

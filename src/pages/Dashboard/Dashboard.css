@@ -17,6 +17,17 @@
     max-width: 250px;
 }
 
+.dashboard-canvas-body {
+    background-color: #fafafa;
+    min-height: 8vh;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: center;
+    font-size: calc(12px + 2vmin);
+    color: rgb(43, 41, 41);
+}
 .dashboard-canvas {
     background-color: #fafafa;
     color: white;
