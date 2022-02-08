@@ -54,7 +54,7 @@ function Login({ setToken }) {
   return (
     <>
       <header className='App-header'>
-        <Typography variant="h2">Welcome to demo homepage</Typography>
+        <Typography variant="h4">Welcome to demo homepage</Typography>
       </header>
       <form className="login-header" onSubmit={handleSubmit}>
         <div className="card">
