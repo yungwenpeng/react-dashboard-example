@@ -94,9 +94,9 @@ function Dashboard() {
       timestamp = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
       //console.log("Message is received timestamp(after): " + timestamp);
       let humidity = JSON.stringify(JSON.parse(received_msg).humidity);
-      humidity = humidity.replace('[[','').replace(']]', '').replace('"','').split(',')[1].replace('"','');
+      humidity = humidity.replace('[[','').replace(']]', '').split(',')[1].replace('"','').replace('"','');
       let temperature = JSON.stringify(JSON.parse(received_msg).temperature);
-      temperature = temperature.replace('[[','').replace(']]', '').replace('"','').split(',')[1].replace('"','');
+      temperature = temperature.replace('[[','').replace(']]', '').split(',')[1].replace('"','').replace('"','');
       console.log("Message is received: " + received_msg);
       console.log("Message is received interval:", limit, ", timestamp: ", timestamp, ", temperature:", temperature, ",humidity:", humidity);
       setlastestTemperatureData(temperature);
@@ -140,11 +140,14 @@ function Dashboard() {
   useEffect(() => {
     const fetchDeviceInfo = async () => {
       let decoded = jwt_decode(token);
-      // For customer fetch device info API
-      let fetchDeviceUrl = api_url + 'customer/' + decoded['customerId']
-              +'/deviceInfos?pageSize=20&page=0'
-      // For tenant fetch device info API
-      //let fetchDeviceUrl = api_url + 'tenant/deviceInfos?pageSize=20&page=0';
+      let fetchDeviceUrl = api_url;
+      if (decoded['scopes'][0] === 'CUSTOMER_USER'){
+        // For customer fetch device info API
+        fetchDeviceUrl = fetchDeviceUrl + 'customer/' + decoded['customerId'] +'/deviceInfos?pageSize=20&page=0'
+      } else if(decoded['scopes'][0] === 'TENANT_ADMIN'){
+        // For tenant fetch device info API
+        fetchDeviceUrl = fetchDeviceUrl + 'tenant/deviceInfos?pageSize=20&page=0';
+      }
       //console.log('fetchDeviceUrl:', fetchDeviceUrl);
       fetch(fetchDeviceUrl, {
         method: 'GET',
