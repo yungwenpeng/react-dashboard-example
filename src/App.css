@@ -39,3 +39,8 @@
     transform: rotate(360deg);
   }
 }
+
+.logout:hover {
+  transform: scale(2);
+  transition-duration: 0.5s;
+}

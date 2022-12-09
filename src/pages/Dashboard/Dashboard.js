@@ -1,4 +1,5 @@
 import './Dashboard.css';
+import PropTypes from 'prop-types';
 import { Typography, InputLabel, FormControl, Select, MenuItem } from "@material-ui/core";
 import { useEffect, useState, useRef } from 'react';
 import { Chart, registerables } from 'chart.js';
@@ -32,7 +33,7 @@ let dataSetup = {
   ]
 };
 
-function Dashboard() {
+function Dashboard({ setCurrentPath }) {
 
   const [lastestTemperatureReading, setlastestTemperatureData] = useState();
   const [lastestHumidityReading, setlastestHumidityData] = useState();
@@ -80,11 +81,11 @@ function Dashboard() {
   useEffect(() => {
     //if (typeof chartTimeseries !== "undefined") chartTimeseries.destroy();
 
-    function fetchmeasurements(){
+    function fetchmeasurements() {
       setlastestTemperatureData(generateRandomInt(10, 50));
       setlastestHumidityData(generateRandomInt(40, 70));
     };
-    
+
     const canvasTimeseries = document.getElementById('chartTimeseries');
     chartTimeseries = new Chart(canvasTimeseries, {
       type: 'line',
@@ -99,14 +100,16 @@ function Dashboard() {
       let timestamp = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
       console.log("datatime: " + timestamp);
       fetchmeasurements();
-      if (typeof lastestTemperatureReading !== "undefined" && 
-          typeof lastestHumidityReading !== "undefined") {
-        addDataToChart(chartTimeseries, intervalOption, timestamp, 
-            lastestTemperatureReading, lastestHumidityReading);
+      if (typeof lastestTemperatureReading !== "undefined" &&
+        typeof lastestHumidityReading !== "undefined") {
+        addDataToChart(chartTimeseries, intervalOption, timestamp,
+          lastestTemperatureReading, lastestHumidityReading);
         chartTimeseries.update();
       };
     }, 1000);
 
+    setCurrentPath('dashboard');
+    
     return () => {
       chartTimeseries.destroy();
       clearInterval(intervalId.current);
@@ -117,7 +120,7 @@ function Dashboard() {
     <>
       <header className="dashboard-header">
         <Typography variant="h5">Current Temperature: {lastestTemperatureReading} °C,
-            Humidity: {lastestHumidityReading} %</Typography>
+          Humidity: {lastestHumidityReading} %</Typography>
         <FormControl className='dashboard-formControl' fullWidth size='medium'>
           <InputLabel id="select-label-id">Interval</InputLabel>
           <Select labelId="select-label-id" defaultValue=""
@@ -133,7 +136,11 @@ function Dashboard() {
         <canvas className="dashboard-canvas" id="chartTimeseries"></canvas>
       </div>
     </>
-    
+
   );
 }
 export default Dashboard;
+
+Dashboard.propTypes = {
+  setCurrentPath: PropTypes.func.isRequired
+}

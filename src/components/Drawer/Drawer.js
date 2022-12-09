@@ -1,42 +1,75 @@
 import React, { useState } from "react";
-import { 
-  Divider, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText, makeStyles
-} from "@material-ui/core";
+import { IconButton } from "@material-ui/core";
 import HomeIcon from '@material-ui/icons/Home';
-import { Link } from 'react-router-dom';
-
 import MenuIcon from "@material-ui/icons/Menu";
 import DashboardIcon from '@material-ui/icons/Dashboard';
 import useToken from '../../useToken';
 import jwt_decode from "jwt-decode";
 import LogoutIcon from '@mui/icons-material/Logout';
+import Tooltip from '@mui/material/Tooltip';
+import { styled } from "@mui/material/styles";
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemText from "@mui/material/ListItemText";
+import Divider from "@mui/material/Divider";
+import drawerImage from '../../images/siderbar_bg.png';
 
-const useStyles = makeStyles(()=>({
-    welcome:{
-      color: "blue",
-      fontSize: "18px",
-      textAlign: 'center',
-      padding: '10px'
-    },
-    link:{
-        textDecoration:"none",
-        color: "black",
-        fontSize: "15px",
-    },
-    icon:{
-        color: "white"
-    }
+const DrawerHeader = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  padding: theme.spacing(0, 1),
+  // necessary for content to be below app bar
+  ...theme.mixins.toolbar,
+  justifyContent: 'left',
+  fontWeight: 'bold',
+  fontSize: '130%',
+  color: '	#4169E1'
 }));
 
+const StyledList = styled(List)({
+  // selected and (selected + hover) states
+  '&& .Mui-selected, && .Mui-selected:hover': {
+    backgroundColor: '#00CED1',
+    '&, & .MuiListItemIcon-root': {
+      color: 'white',
+    },
+  },
+  // hover states
+  '& .MuiListItemButton-root:hover': {
+    border: '2px solid rgb(50,205,50)',
+    borderRadius: '10px',
+    backgroundColor: '#32CD32',
+    '&, & .MuiListItemIcon-root': {
+      color: 'white',
+    },
+    '& svg': {
+      color: '#FF69B4',
+      fontSize: '200%',
+      transition: 'fontSize 0.5s'
+    },
+    '& span': {
+      color: '#FF1493',
+      fontSize: '120%',
+      fontWeight: 'bold',
+      transition: 'fontSize 0.5s'
+    }
+  },
+});
+
+
 function DrawerComponent() {
-  const classes = useStyles();
+  const drawerWidth = 240;
   const [openDrawer, setOpenDrawer] = useState(false);
   const { token } = useToken();
   let decoded = jwt_decode(token);
+
   const signoutSubmit = (e) => {
     e.preventDefault();
     let n = sessionStorage.length;
-    while(n--) {
+    while (n--) {
       let key = sessionStorage.key(n);
       sessionStorage.removeItem(key);
     }
@@ -47,44 +80,60 @@ function DrawerComponent() {
   return (
     <>
       <Drawer
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          "& .MuiDrawer-paper": {
+            width: drawerWidth,
+            boxSizing: "border-box",
+            backgroundImage: `url(${drawerImage})`,
+            backgroundSize: 'cover',
+            backgroundRepeat: 'no-repeat',
+          }
+        }}
         open={openDrawer}
         onClose={() => setOpenDrawer(false)}
       >
-        <i className={classes.welcome}> Hi, {decoded['name'].slice(0, decoded['name'].lastIndexOf("@"))}</i>
-        <List>
-          <ListItem onClick={() => setOpenDrawer(false)}>
-            <ListItemIcon><HomeIcon/></ListItemIcon>
-            <ListItemText>
-              <Link to="/" className={classes.link}>Home</Link>
-            </ListItemText>
-          </ListItem>
-          <Divider/>
-        </List>
-        <List>
-          <ListItem onClick={() => setOpenDrawer(false)}>
-            <ListItemIcon><DashboardIcon/></ListItemIcon>
-            <ListItemText>
-              <Link to="/dashboard" className={classes.link}>Dashboard</Link>
-            </ListItemText>
-          </ListItem>
-          <Divider/>
-        </List>
-        {
-          (token) ? (
-            <List>
-              <ListItem onClick={() => setOpenDrawer(false)}>
-                <ListItemIcon><LogoutIcon/></ListItemIcon>
-                <ListItemText onClick={signoutSubmit}>
-                  <Link to="/" className={classes.link}>Sign out</Link>
-                </ListItemText>
-              </ListItem>
-          <Divider/>
-            </List>
-          ) : ('')
-        }
+        <DrawerHeader>
+          Hi, {decoded['email'].slice(0, decoded['email'].lastIndexOf("@"))}
+        </DrawerHeader>
+        <Divider />
+        <StyledList>
+          <List>
+            <ListItem onClick={() => setOpenDrawer(false)}>
+              <ListItemButton component="a" href="/">
+                <ListItemIcon><HomeIcon /></ListItemIcon>
+                <ListItemText primary='Home' />
+              </ListItemButton>
+            </ListItem>
+          </List>
+          <List>
+            <ListItem onClick={() => setOpenDrawer(false)}>
+              <ListItemButton component="a" href="/dashboard">
+                <ListItemIcon><DashboardIcon /></ListItemIcon>
+                <ListItemText primary='Dashboard' />
+              </ListItemButton>
+            </ListItem>
+          </List>
+          {
+            (token) ? (
+              <List>
+                <ListItem onClick={() => setOpenDrawer(false)}>
+                  <ListItemButton component="a" href="/" onClick={signoutSubmit}>
+                    <ListItemIcon><LogoutIcon /></ListItemIcon>
+                    <ListItemText primary='Logout' />
+                  </ListItemButton>
+                </ListItem>
+              </List>
+            ) : ('')
+          }
+        </StyledList>
+
       </Drawer>
-      <IconButton onClick={() => setOpenDrawer(!openDrawer)} className={classes.icon}>
-        <MenuIcon />
+      <IconButton onClick={() => setOpenDrawer(!openDrawer)} style={{ color: "white" }}>
+        <Tooltip title="Navigation menu">
+          <MenuIcon />
+        </Tooltip>
       </IconButton>
     </>
   );
