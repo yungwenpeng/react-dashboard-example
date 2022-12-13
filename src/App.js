@@ -3,6 +3,7 @@ import Login from './components/Login/Login';
 import DrawerComponent from './components/Drawer/Drawer';
 import Home from './pages/Home/Home';
 import Dashboard from './pages/Dashboard/Dashboard';
+import UsersList from './pages/Users/Users';
 import useToken from './useToken';
 import useCurrentPath from './useCurrentPath';
 import Toolbar from '@mui/material/Toolbar';
@@ -33,7 +34,7 @@ function App() {
       let key = sessionStorage.key(n);
       sessionStorage.removeItem(key);
     }
-    window.location.reload(false);
+    window.location.replace('/');
   }
 
   return (
@@ -58,6 +59,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home setCurrentPath={setCurrentPath} />}></Route>
         <Route path="/dashboard" element={<Dashboard setCurrentPath={setCurrentPath} />} />
+        <Route path="/users" element={<UsersList setCurrentPath={setCurrentPath} />} />
       </Routes>
     </BrowserRouter>
   );

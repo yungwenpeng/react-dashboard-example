@@ -6,3 +6,5 @@ export const serverConfig = {
 
 // Modify api_url
 export const api_url = 'http://' + serverConfig.host + ':' + serverConfig.port;
+
+export const websocket_url = 'ws://' + serverConfig.host + ':' + serverConfig.port;

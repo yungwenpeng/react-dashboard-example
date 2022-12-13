@@ -16,6 +16,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 import drawerImage from '../../images/siderbar_bg.png';
+import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -73,9 +74,8 @@ function DrawerComponent() {
       let key = sessionStorage.key(n);
       sessionStorage.removeItem(key);
     }
-    window.location.reload(false);
+    window.location.replace('/');
   }
-
 
   return (
     <>
@@ -109,14 +109,23 @@ function DrawerComponent() {
           </List>
           <List>
             <ListItem onClick={() => setOpenDrawer(false)}>
+              <ListItemButton component="a" href="/users">
+                <ListItemIcon><SupervisorAccountIcon /></ListItemIcon>
+                <ListItemText primary='Users' />
+              </ListItemButton>
+            </ListItem>
+          </List>
+          <List>
+            <ListItem onClick={() => setOpenDrawer(false)}>
               <ListItemButton component="a" href="/dashboard">
                 <ListItemIcon><DashboardIcon /></ListItemIcon>
                 <ListItemText primary='Dashboard' />
               </ListItemButton>
             </ListItem>
           </List>
+          <Divider />
           {
-            (token) ? (
+            token && 
               <List>
                 <ListItem onClick={() => setOpenDrawer(false)}>
                   <ListItemButton component="a" href="/" onClick={signoutSubmit}>
@@ -125,7 +134,6 @@ function DrawerComponent() {
                   </ListItemButton>
                 </ListItem>
               </List>
-            ) : ('')
           }
         </StyledList>
 
