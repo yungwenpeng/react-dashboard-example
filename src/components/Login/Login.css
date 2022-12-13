@@ -8,7 +8,7 @@
     font-size: calc(10px + 2vmin);
     color: rgb(43, 41, 41);
     background-image:
-        url("../../../public/welcome_bg.png");
+        url("../../images/welcome_bg.png");
     background-repeat: no-repeat;
     background-size: cover;
 }
