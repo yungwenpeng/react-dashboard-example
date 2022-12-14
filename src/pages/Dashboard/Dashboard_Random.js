@@ -1,4 +1,5 @@
 import './Dashboard.css';
+import PropTypes from 'prop-types';
 import { Typography, InputLabel, FormControl, Select, MenuItem } from "@material-ui/core";
 import { useEffect, useState, useRef } from 'react';
 import { Chart, registerables } from 'chart.js';
@@ -32,7 +33,7 @@ let dataSetup = {
   ]
 };
 
-function Dashboard() {
+function Dashboard({ setCurrentPath }) {
 
   const [lastestTemperatureReading, setlastestTemperatureData] = useState();
   const [lastestHumidityReading, setlastestHumidityData] = useState();
@@ -76,6 +77,10 @@ function Dashboard() {
     });
   };
 
+  useEffect(() => {
+    setCurrentPath('dashboard');
+  },[setCurrentPath]);
+
 
   useEffect(() => {
     //if (typeof chartTimeseries !== "undefined") chartTimeseries.destroy();
@@ -107,6 +112,8 @@ function Dashboard() {
       };
     }, 1000);
 
+    setCurrentPath('dashboard');
+    
     return () => {
       chartTimeseries.destroy();
       clearInterval(intervalId.current);
@@ -137,3 +144,7 @@ function Dashboard() {
   );
 }
 export default Dashboard;
+
+Dashboard.propTypes = {
+  setCurrentPath: PropTypes.func.isRequired
+}

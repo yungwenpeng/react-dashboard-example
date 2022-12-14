@@ -1,10 +1,26 @@
-import { Typography } from "@material-ui/core";
+import { useEffect } from 'react';
+import * as collections from '../../collections';
+import PropTypes from 'prop-types';
+import './Home.css';
 
-function Home() {
+function Home({ setCurrentPath }) {
+
+  useEffect(() => {
+    setCurrentPath('home');
+  }, [setCurrentPath]);
+
   return (
-    <header className="App-header">
-      <Typography variant="h3">Demo homepage</Typography>
-    </header>
+    <>
+      <form className='home'>
+        <div>
+          <collections.Typography variant="h3">Demo homepage</collections.Typography>
+        </div>
+      </form>
+    </>
   );
 }
 export default Home;
+
+Home.propTypes = {
+  setCurrentPath: PropTypes.func.isRequired
+}

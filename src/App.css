@@ -25,7 +25,6 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: rgb(43, 41, 41);
-  width: 100%;
 }
 
 .App-link {
@@ -39,4 +38,9 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.logout:hover {
+  transform: scale(2);
+  transition-duration: 0.5s;
 }

@@ -1,4 +1,5 @@
 import './Dashboard.css';
+import PropTypes from 'prop-types';
 import { Typography, InputLabel, FormControl, Select, MenuItem } from "@material-ui/core";
 import { useEffect, useState, useRef } from 'react';
 import { Chart, registerables } from 'chart.js';
@@ -37,7 +38,7 @@ let dataSetup = {
 
 let webSocket;
 
-function Dashboard() {
+function Dashboard({ setCurrentPath }) {
 
   const [lastestTemperatureReading, setlastestTemperatureData] = useState();
   const [lastestHumidityReading, setlastestHumidityData] = useState();
@@ -67,7 +68,7 @@ function Dashboard() {
 
     let fetchTelemetryUrl = websocket_url + "/ws/plugins/telemetry?token=" + token;
     //console.log('fetchTelemetryUrl:', fetchTelemetryUrl);
-    console.log('fetchTelemetry - isMounted:', isMounted.current);
+    //console.log('fetchTelemetry - isMounted:', isMounted.current);
     
     webSocket = new WebSocket(fetchTelemetryUrl);
     webSocket.onopen = function () {
@@ -87,6 +88,7 @@ function Dashboard() {
     };
     webSocket.onmessage = function (event) {
       let received_msg = JSON.stringify(JSON.parse(event.data).data);
+      //console.log("Message is received received_msg(before): " + received_msg);
       let timestamp = JSON.stringify(JSON.parse(received_msg).temperature);
       //console.log("Message is received timestamp(before): " + timestamp);
       timestamp = timestamp.replace('[[','').replace(']]', '').split(',')[0];
@@ -94,11 +96,15 @@ function Dashboard() {
       timestamp = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
       //console.log("Message is received timestamp(after): " + timestamp);
       let humidity = JSON.stringify(JSON.parse(received_msg).humidity);
+      //console.log("Message is received humidity(before): " + humidity);
       humidity = humidity.replace('[[','').replace(']]', '').split(',')[1].replace('"','').replace('"','');
+      //console.log("Message is received humidity(after): " + humidity);
       let temperature = JSON.stringify(JSON.parse(received_msg).temperature);
+      //console.log("Message is received temperature(before): " + temperature);
       temperature = temperature.replace('[[','').replace(']]', '').split(',')[1].replace('"','').replace('"','');
-      console.log("Message is received: " + received_msg);
-      console.log("Message is received interval:", limit, ", timestamp: ", timestamp, ", temperature:", temperature, ",humidity:", humidity);
+      //console.log("Message is received temperature(after): " + temperature);
+      //console.log("Message is received: " + received_msg);
+      //console.log("Message is received interval:", limit, ", timestamp: ", timestamp, ", temperature:", temperature, ",humidity:", humidity);
       setlastestTemperatureData(temperature);
       setlastestHumidityData(humidity);
       addDataToChart(chartTimeseries, limit, timestamp, temperature, humidity);
@@ -140,6 +146,7 @@ function Dashboard() {
   useEffect(() => {
     const fetchDeviceInfo = async () => {
       let decoded = jwt_decode(token);
+      //console.log('fetchDeviceInfo decoded: ', decoded, decoded['scopes'][0]);
       let fetchDeviceUrl = api_url;
       if (decoded['scopes'][0] === 'CUSTOMER_USER'){
         // For customer fetch device info API
@@ -148,7 +155,7 @@ function Dashboard() {
         // For tenant fetch device info API
         fetchDeviceUrl = fetchDeviceUrl + 'tenant/deviceInfos?pageSize=20&page=0';
       }
-      //console.log('fetchDeviceUrl:', fetchDeviceUrl);
+      console.log('fetchDeviceUrl:', fetchDeviceUrl);
       fetch(fetchDeviceUrl, {
         method: 'GET',
         headers: new Headers({
@@ -161,7 +168,7 @@ function Dashboard() {
          console.log('fetchDeviceInfo all:', data['data']);
          let dInfos = [];
          data['data'].forEach((device) => {
-           if (device['name'].includes('DHT11')) {
+           if (device['name'].includes('DHT11') || device['name'].includes('device')) {
             console.log('device:', device['name'], ' , id:', device['id']['id']);
             dInfos.push({
               "name": device['name'],
@@ -248,3 +255,7 @@ function Dashboard() {
   );
 }
 export default Dashboard;
+
+Dashboard.propTypes = {
+  setCurrentPath: PropTypes.func.isRequired
+}

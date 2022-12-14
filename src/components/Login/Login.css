@@ -1,13 +1,16 @@
 .login-header {
     background-color: #f0f0f0;
-    min-height: 10vh;
+    min-height: 60vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     font-size: calc(10px + 2vmin);
     color: rgb(43, 41, 41);
-    width: 100%;
+    background-image:
+        url("../../images/welcome_bg.png");
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 .card {
@@ -58,7 +61,7 @@ input[type="password"] {
     border: none;
     background-color: #267fff;
     border-radius: 9px;
-    font-size: 12px;
+    font-size: 16px;
     outline: 0;
     color: #fff;
     cursor: pointer;
@@ -74,4 +77,11 @@ input[type="password"] {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.alert {
+    position: relative;
+    font-size: 14px;
+    text-align: center;
+    color: rgb(255, 0, 0);
 }
