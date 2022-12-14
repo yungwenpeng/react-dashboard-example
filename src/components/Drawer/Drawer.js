@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { IconButton } from "@material-ui/core";
 import useToken from '../../useToken';
 import jwt_decode from "jwt-decode";
 import { styled } from "@mui/material/styles";
@@ -48,7 +47,6 @@ const StyledList = styled(collections.List)({
   },
 });
 
-
 function DrawerComponent() {
   const drawerWidth = 240;
   const [openDrawer, setOpenDrawer] = useState(false);
@@ -94,16 +92,12 @@ function DrawerComponent() {
                 <collections.ListItemText primary='Home' />
               </collections.ListItemButton>
             </collections.ListItem>
-          </collections.List>
-          <collections.List>
             <collections.ListItem onClick={() => setOpenDrawer(false)}>
               <collections.ListItemButton component="a" href="/users">
                 <collections.ListItemIcon><collections.SupervisorAccountIcon /></collections.ListItemIcon>
                 <collections.ListItemText primary='Users' />
               </collections.ListItemButton>
             </collections.ListItem>
-          </collections.List>
-          <collections.List>
             <collections.ListItem onClick={() => setOpenDrawer(false)}>
               <collections.ListItemButton component="a" href="/dashboard">
                 <collections.ListItemIcon><collections.DashboardIcon /></collections.ListItemIcon>
@@ -126,11 +120,11 @@ function DrawerComponent() {
         </StyledList>
 
       </collections.Drawer>
-      <IconButton onClick={() => setOpenDrawer(!openDrawer)} style={{ color: "white", alignItems: 'center'}}>
+      <collections.IconButton onClick={() => setOpenDrawer(!openDrawer)} style={{ color: "white", alignItems: 'center' }}>
         <collections.Tooltip title="Navigation menu">
           <collections.MenuIcon />
         </collections.Tooltip>
-      </IconButton>
+      </collections.IconButton>
     </>
   );
 }

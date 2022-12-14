@@ -93,7 +93,7 @@ function Login({ setToken }) {
         <div className="card">
           <p>Enter your credentials to access your account.</p>
           <collections.Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <collections.AccountCircleIcon fontSize='inherit' sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
+            <collections.AccountCircleIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
             <collections.TextField
               type="text"
               className="input-text"
@@ -104,7 +104,7 @@ function Login({ setToken }) {
             />
           </collections.Box>
           <collections.Box className="input-text" sx={{ display: 'flex', alignItems: 'center' }}>
-            <collections.LockIcon fontSize='inherit' sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
+            <collections.LockIcon sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
             <collections.TextField
               type={textFieldType}
               className="input-text"
