@@ -5,22 +5,11 @@ import jwt_decode from "jwt-decode";
 import { api_url, websocket_url } from '../../environment/environment'
 import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Unstable_Grid2';
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
+import * as collections from '../../collections';
 import bgImage from '../../images/welcome_bg.png';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import Typography from '@mui/material/Typography';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import IconButton from '@mui/material/IconButton';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogActions from '@mui/material/DialogActions';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import ErrorIcon from '@mui/icons-material/Error';
 
-const Item = styled(Paper)(({ theme }) => ({
+
+const Item = styled(collections.Paper)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
     ...theme.typography.body2,
     padding: theme.spacing(1),
@@ -34,6 +23,7 @@ function UsersList({ setCurrentPath }) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const websocket = useRef(null); //useRef doesn't triggers rerenders
+    // For Update user data
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [userOldInfo, setUserOldInfo] = useState(null);
     const [userNewName, setUserNewName] = useState(null);
@@ -97,13 +87,13 @@ function UsersList({ setCurrentPath }) {
             } else if (message['method'] === 'delete') {
                 setData(data.filter(user => user.id !== message['id']));
             } else if (message['method'] === 'update') {
-                let newData =  data.map((user) => {
-                    if (user.id === message['id']){
+                let newData = data.map((user) => {
+                    if (user.id === message['id']) {
                         user.userName = message['userName'];
                         user.email = message['email'];
                         user.password = message['password'];
                         user.role = message['role'];
-                    } 
+                    }
                     return user;
                 });
                 setData(newData);
@@ -182,7 +172,7 @@ function UsersList({ setCurrentPath }) {
 
     return (
         <>
-            <Box sx={{
+            <collections.Box sx={{
                 width: '98%',
                 padding: '1%',
                 backgroundImage: `url(${bgImage})`,
@@ -202,22 +192,22 @@ function UsersList({ setCurrentPath }) {
                                 <Item key={user.id}>
                                     <Grid container spacing={2} columns={8} direction="row">
                                         <Grid xs={2}>
-                                            <AccountCircleIcon style={{ color: 'blue', fontSize: '80px' }} />
+                                            <collections.AccountCircleIcon style={{ color: 'blue', fontSize: '80px' }} />
                                         </Grid>
                                         <Grid xs={4}>
-                                            <Typography align='left' display="block" gutterBottom>
+                                            <collections.Typography align='left' display="block" gutterBottom>
                                                 {user.userName}
-                                            </Typography>
-                                            <Typography align='left' display="block" gutterBottom>
+                                            </collections.Typography>
+                                            <collections.Typography align='left' display="block" gutterBottom>
                                                 {user.email}
-                                            </Typography>
-                                            <Typography align='left' display="block" gutterBottom>
+                                            </collections.Typography>
+                                            <collections.Typography align='left' display="block" gutterBottom>
                                                 {user.role}
-                                            </Typography>
+                                            </collections.Typography>
                                         </Grid>
                                         <Grid xs={2} direction="column">
-                                            <IconButton aria-label="edit" onClick={() => showEditDialog(user)}><EditIcon style={{ color: 'black', fontSize: '24px' }} /></IconButton>
-                                            <IconButton aria-label="delete" onClick={() => handleDelete(user.email)}><DeleteIcon style={{ color: 'black', fontSize: '24px' }} /></IconButton>
+                                            <collections.IconButton aria-label="edit" onClick={() => showEditDialog(user)}><collections.EditIcon style={{ color: 'black', fontSize: '24px' }} /></collections.IconButton>
+                                            <collections.IconButton aria-label="delete" onClick={() => handleDelete(user.email)}><collections.DeleteIcon style={{ color: 'black', fontSize: '24px' }} /></collections.IconButton>
                                         </Grid>
                                     </Grid>
                                 </Item>
@@ -227,72 +217,72 @@ function UsersList({ setCurrentPath }) {
                             <Item key={data['id']}>
                                 <Grid container spacing={2} columns={8} direction="row">
                                     <Grid xs={2}>
-                                        <AccountCircleIcon style={{ color: 'blue', fontSize: '80px' }} />
+                                        <collections.AccountCircleIcon style={{ color: 'blue', fontSize: '80px' }} />
                                     </Grid>
                                     <Grid xs={4}>
-                                        <Typography align='left' display="block" gutterBottom>
+                                        <collections.Typography align='left' display="block" gutterBottom>
                                             {data['userName']}
-                                        </Typography>
-                                        <Typography align='left' display="block" gutterBottom>
+                                        </collections.Typography>
+                                        <collections.Typography align='left' display="block" gutterBottom>
                                             {data['email']}
-                                        </Typography>
-                                        <Typography align='left' display="block" gutterBottom>
+                                        </collections.Typography>
+                                        <collections.Typography align='left' display="block" gutterBottom>
                                             {data['role']}
-                                        </Typography>
+                                        </collections.Typography>
                                     </Grid>
                                     <Grid xs={2} direction="column">
-                                        <IconButton aria-label="edit" onClick={() => showEditDialog(data)}><EditIcon style={{ color: 'black', fontSize: '24px' }} /></IconButton>
+                                        <collections.IconButton aria-label="edit" onClick={() => showEditDialog(data)}><collections.EditIcon style={{ color: 'black', fontSize: '24px' }} /></collections.IconButton>
                                     </Grid>
                                 </Grid>
                             </Item>
                         </Grid>
                     }
                 </Grid>
-            </Box>
-            <Dialog open={openEditDialog} onClose={handleEditClose}>
-                <DialogTitle>Edit User data</DialogTitle>
-                <Box sx={{ display: 'flex', alignItems: 'center', padding: '10px 15px' }}>
-                    <TextField
+            </collections.Box>
+            <collections.Dialog open={openEditDialog} onClose={handleEditClose}>
+                <collections.DialogTitle>Edit User data</collections.DialogTitle>
+                <collections.Box sx={{ display: 'flex', alignItems: 'center', padding: '10px 15px' }}>
+                    <collections.TextField
                         id="input-with-name"
                         label="Name"
                         defaultValue={userOldInfo ? userOldInfo['userName'] : 'Enter your Name'}
                         variant="outlined"
                         onChange={(e) => setUserNewName(e.target.value)} />
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', padding: '0 15px' }}>
-                    <TextField
+                </collections.Box>
+                <collections.Box sx={{ display: 'flex', alignItems: 'center', padding: '0 15px' }}>
+                    <collections.TextField
                         id="input-with-email"
                         label="Email"
                         defaultValue={userOldInfo ? userOldInfo['email'] : 'Enter your Email'}
                         variant="outlined"
                         onChange={(e) => setUserNewEmail(e.target.value)} />
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', padding: '10px 15px' }}>
-                    <TextField
+                </collections.Box>
+                <collections.Box sx={{ display: 'flex', alignItems: 'center', padding: '10px 15px' }}>
+                    <collections.TextField
                         id="input-with-password"
                         label="Enter your password"
                         variant="outlined"
                         onChange={(e) => setUserNewPassword(e.target.value)} />
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', padding: '10px 15px' }}>
-                    <TextField
+                </collections.Box>
+                <collections.Box sx={{ display: 'flex', alignItems: 'center', padding: '10px 15px' }}>
+                    <collections.TextField
                         id="input-with-authority"
                         label="Authority"
                         defaultValue={userOldInfo ? userOldInfo['role'] : 'user'}
                         variant="outlined"
                         onChange={(e) => setUserNewRole(e.target.value)} />
-                </Box>
-                <DialogActions>
-                    <Button onClick={handleEditClose}>Cancel</Button>
-                    <Button onClick={() => handleEditSave(userOldInfo)}>Update</Button>
-                </DialogActions>
+                </collections.Box>
+                <collections.DialogActions>
+                    <collections.Button onClick={handleEditClose}>Cancel</collections.Button>
+                    <collections.Button onClick={() => handleEditSave(userOldInfo)}>Update</collections.Button>
+                </collections.DialogActions>
                 {postResult &&
                     <div className="alert alert-secondary mt-2" role="alert">
-                        <ErrorIcon fontSize='larger' />
+                        <collections.ErrorIcon fontSize='larger' />
                         <pre>{postResult}</pre>
                     </div>
                 }
-            </Dialog>
+            </collections.Dialog>
         </>
     );
 }

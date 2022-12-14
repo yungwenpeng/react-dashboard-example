@@ -1,13 +1,5 @@
 import { useState, useEffect } from 'react';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import { Typography, Box, TextField, Button, IconButton } from "@material-ui/core";
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import LockIcon from '@material-ui/icons/Lock';
-import SendIcon from '@material-ui/icons/Send';
-import VisibilityIcon from '@material-ui/icons/Visibility';
-import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
-import ErrorIcon from '@mui/icons-material/Error';
+import * as collections from '../../collections';
 import './Login.css';
 import PropTypes from 'prop-types';
 import { api_url } from '../../environment/environment';
@@ -49,6 +41,7 @@ function Login({ setToken }) {
       }
       const data = await res.json();
       setToken(data);
+      //window.location.replace('/');
     } catch (err) {
       console.log('err: ', err.message);
     }
@@ -88,20 +81,20 @@ function Login({ setToken }) {
 
   return (
     <>
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
+      <collections.AppBar position="static">
+        <collections.Toolbar>
+          <collections.Typography variant="h4" component="div" sx={{ flexGrow: 1 }}>
             Login
-          </Typography>
-        </Toolbar>
-      </AppBar>
+          </collections.Typography>
+        </collections.Toolbar>
+      </collections.AppBar>
 
       <form className="login-header" onSubmit={handleSubmit}>
         <div className="card">
           <p>Enter your credentials to access your account.</p>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <AccountCircleIcon fontSize='inherit' sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
-            <TextField
+          <collections.Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <collections.AccountCircleIcon fontSize='inherit' sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
+            <collections.TextField
               type="text"
               className="input-text"
               id="input-with-email"
@@ -109,31 +102,31 @@ function Login({ setToken }) {
               variant="outlined"
               onChange={e => setUserName(e.target.value)}
             />
-          </Box>
-          <Box className="input-text" sx={{ display: 'flex', alignItems: 'center' }}>
-            <LockIcon fontSize='inherit' sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
-            <TextField
+          </collections.Box>
+          <collections.Box className="input-text" sx={{ display: 'flex', alignItems: 'center' }}>
+            <collections.LockIcon fontSize='inherit' sx={{ color: 'action.active', mr: 1, my: 0.5 }} />
+            <collections.TextField
               type={textFieldType}
               className="input-text"
               id="input-with-password"
               label="Enter your password"
               InputProps={{
                 endAdornment: (
-                  <IconButton onClick={Eye}>
-                    {eye ? <VisibilityIcon /> : <VisibilityOffIcon />}
-                  </IconButton>
+                  <collections.IconButton onClick={Eye}>
+                    {eye ? <collections.VisibilityIcon /> : <collections.VisibilityOffIcon />}
+                  </collections.IconButton>
                 )
               }}
               variant="outlined"
               onChange={e => setPassword(e.target.value)}
             />
-          </Box>
+          </collections.Box>
           <div className="buttons">
-            <Button className='button' variant="outlined" endIcon={<SendIcon />} type="submit">Login</Button>
+            <collections.Button className='button' variant="outlined" endIcon={<collections.SendIcon />} type="submit">Login</collections.Button>
           </div>
           {postResult &&
             <div className="alert alert-secondary mt-2" role="alert">
-              <ErrorIcon fontSize='larger' />
+              <collections.ErrorIcon fontSize='larger' />
               <pre>{postResult}</pre>
             </div>
           }

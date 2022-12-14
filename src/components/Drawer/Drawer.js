@@ -1,22 +1,10 @@
 import React, { useState } from "react";
 import { IconButton } from "@material-ui/core";
-import HomeIcon from '@material-ui/icons/Home';
-import MenuIcon from "@material-ui/icons/Menu";
-import DashboardIcon from '@material-ui/icons/Dashboard';
 import useToken from '../../useToken';
 import jwt_decode from "jwt-decode";
-import LogoutIcon from '@mui/icons-material/Logout';
-import Tooltip from '@mui/material/Tooltip';
 import { styled } from "@mui/material/styles";
-import Drawer from "@mui/material/Drawer";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
-import Divider from "@mui/material/Divider";
 import drawerImage from '../../images/siderbar_bg.png';
-import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
+import * as collections from '../../collections';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -30,7 +18,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   color: '	#4169E1'
 }));
 
-const StyledList = styled(List)({
+const StyledList = styled(collections.List)({
   // selected and (selected + hover) states
   '&& .Mui-selected, && .Mui-selected:hover': {
     backgroundColor: '#00CED1',
@@ -79,7 +67,7 @@ function DrawerComponent() {
 
   return (
     <>
-      <Drawer
+      <collections.Drawer
         sx={{
           width: drawerWidth,
           flexShrink: 0,
@@ -97,51 +85,51 @@ function DrawerComponent() {
         <DrawerHeader>
           Hi, {decoded['email'].slice(0, decoded['email'].lastIndexOf("@"))}
         </DrawerHeader>
-        <Divider />
+        <collections.Divider />
         <StyledList>
-          <List>
-            <ListItem onClick={() => setOpenDrawer(false)}>
-              <ListItemButton component="a" href="/">
-                <ListItemIcon><HomeIcon /></ListItemIcon>
-                <ListItemText primary='Home' />
-              </ListItemButton>
-            </ListItem>
-          </List>
-          <List>
-            <ListItem onClick={() => setOpenDrawer(false)}>
-              <ListItemButton component="a" href="/users">
-                <ListItemIcon><SupervisorAccountIcon /></ListItemIcon>
-                <ListItemText primary='Users' />
-              </ListItemButton>
-            </ListItem>
-          </List>
-          <List>
-            <ListItem onClick={() => setOpenDrawer(false)}>
-              <ListItemButton component="a" href="/dashboard">
-                <ListItemIcon><DashboardIcon /></ListItemIcon>
-                <ListItemText primary='Dashboard' />
-              </ListItemButton>
-            </ListItem>
-          </List>
-          <Divider />
+          <collections.List>
+            <collections.ListItem onClick={() => setOpenDrawer(false)}>
+              <collections.ListItemButton component="a" href="/">
+                <collections.ListItemIcon><collections.HomeIcon /></collections.ListItemIcon>
+                <collections.ListItemText primary='Home' />
+              </collections.ListItemButton>
+            </collections.ListItem>
+          </collections.List>
+          <collections.List>
+            <collections.ListItem onClick={() => setOpenDrawer(false)}>
+              <collections.ListItemButton component="a" href="/users">
+                <collections.ListItemIcon><collections.SupervisorAccountIcon /></collections.ListItemIcon>
+                <collections.ListItemText primary='Users' />
+              </collections.ListItemButton>
+            </collections.ListItem>
+          </collections.List>
+          <collections.List>
+            <collections.ListItem onClick={() => setOpenDrawer(false)}>
+              <collections.ListItemButton component="a" href="/dashboard">
+                <collections.ListItemIcon><collections.DashboardIcon /></collections.ListItemIcon>
+                <collections.ListItemText primary='Dashboard' />
+              </collections.ListItemButton>
+            </collections.ListItem>
+          </collections.List>
+          <collections.Divider />
           {
-            token && 
-              <List>
-                <ListItem onClick={() => setOpenDrawer(false)}>
-                  <ListItemButton component="a" href="/" onClick={signoutSubmit}>
-                    <ListItemIcon><LogoutIcon /></ListItemIcon>
-                    <ListItemText primary='Logout' />
-                  </ListItemButton>
-                </ListItem>
-              </List>
+            token &&
+            <collections.List>
+              <collections.ListItem onClick={() => setOpenDrawer(false)}>
+                <collections.ListItemButton component="a" href="/" onClick={signoutSubmit}>
+                  <collections.ListItemIcon><collections.LogoutIcon /></collections.ListItemIcon>
+                  <collections.ListItemText primary='Logout' />
+                </collections.ListItemButton>
+              </collections.ListItem>
+            </collections.List>
           }
         </StyledList>
 
-      </Drawer>
-      <IconButton onClick={() => setOpenDrawer(!openDrawer)} style={{ color: "white" }}>
-        <Tooltip title="Navigation menu">
-          <MenuIcon />
-        </Tooltip>
+      </collections.Drawer>
+      <IconButton onClick={() => setOpenDrawer(!openDrawer)} style={{ color: "white", alignItems: 'center'}}>
+        <collections.Tooltip title="Navigation menu">
+          <collections.MenuIcon />
+        </collections.Tooltip>
       </IconButton>
     </>
   );

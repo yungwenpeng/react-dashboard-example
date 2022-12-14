@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Typography } from "@material-ui/core";
+import * as collections from '../../collections';
 import PropTypes from 'prop-types';
 import './Home.css';
 
@@ -13,7 +13,7 @@ function Home({ setCurrentPath }) {
     <>
       <form className='home'>
         <div>
-          <Typography variant="h3">Demo homepage</Typography>
+          <collections.Typography variant="h3">Demo homepage</collections.Typography>
         </div>
       </form>
     </>
