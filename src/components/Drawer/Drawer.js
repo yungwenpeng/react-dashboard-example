@@ -92,8 +92,12 @@ function DrawerComponent() {
                 <collections.ListItemText primary='Home' />
               </collections.ListItemButton>
             </collections.ListItem>
-          </collections.List>
-          <collections.List>
+            <collections.ListItem onClick={() => setOpenDrawer(false)}>
+              <collections.ListItemButton component="a" href="/devices">
+                <collections.ListItemIcon><collections.DevicesOtherIcon /></collections.ListItemIcon>
+                <collections.ListItemText primary='Devices' />
+              </collections.ListItemButton>
+            </collections.ListItem>
             <collections.ListItem onClick={() => setOpenDrawer(false)}>
               <collections.ListItemButton component="a" href="/dashboard">
                 <collections.ListItemIcon><collections.DashboardIcon /></collections.ListItemIcon>

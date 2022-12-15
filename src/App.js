@@ -4,6 +4,7 @@ import Login from './components/Login/Login';
 import DrawerComponent from './components/Drawer/Drawer';
 import Home from './pages/Home/Home';
 import Dashboard from './pages/Dashboard/Dashboard';
+import Devices from './pages/Devices/Devices';
 import useToken from './useToken';
 import useCurrentPath from './useCurrentPath';
 import Grid from "@material-ui/core/Grid";
@@ -54,6 +55,7 @@ function App() {
 
         <Routes>
         <Route path="/" element={<Home setCurrentPath={setCurrentPath} />}></Route>
+        <Route path="/devices" element={<Devices setCurrentPath={setCurrentPath} />} />
         <Route path="/dashboard" element={<Dashboard setCurrentPath={setCurrentPath} />} />
         </Routes>
       </BrowserRouter>
