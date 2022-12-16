@@ -11,7 +11,8 @@ import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
-import { api_url, websocket_url } from '../../environment/environment'
+import { api_url, websocket_url } from '../../environment/environment';
+import DeviceLatestTelemetry from './DeviceLatestTelemetry';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -92,27 +93,6 @@ function Devices({ setCurrentPath }) {
         };
         getDevices();
     }, [token]);
-
-
-    /*useEffect(() => {
-        let decoded = jwt_decode(token);
-        console.log('WebSocket decoded:', decoded);
-        const socket = new WebSocket(websocket_url);
-        socket.onopen = () => {
-            console.log('WebSocket Connected');
-        };
-        socket.onclose = function (event) {
-            console.log("Connection is closed!");
-        };
-        socket.onmessage = (event) => {
-            const message = JSON.parse(event.data);
-            console.log('onmessage - message: ', message);
-        };
-        websocket.current = socket;
-        return () => {
-            socket.close();
-        };
-    }, [token]);*/
 
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
@@ -248,7 +228,7 @@ function Devices({ setCurrentPath }) {
                             {selectDevice['name']}
                         </collections.Typography>
                     </StyledBox>
-                    <StyledBox sx={{ px: 2, pb: 2, height: '90%', overflow: 'auto', }} >
+                    <StyledBox sx={{ px: 2, pb: 2, height: '90%', overflow: 'auto', minWidth: '500px'}} >
                         <TabContext value={value}>
                             <collections.Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                 <TabList
@@ -263,7 +243,9 @@ function Devices({ setCurrentPath }) {
                                 </TabList>
                             </collections.Box>
                             <TabPanel value="details">{showDeviceDetails(selectDevice)}</TabPanel>
-                            <TabPanel value="telemetry">Latest telemetry</TabPanel>
+                            <TabPanel value="telemetry">
+                                <DeviceLatestTelemetry selectedDeviceId={selectDevice['id']}/>
+                            </TabPanel>
                         </TabContext>
                     </StyledBox>
                 </SwipeableDrawer>
