@@ -1,38 +1,28 @@
-.dashboard-header {
-    background-color: #08fff3;
-    min-height: 8vh;
-    padding: 10px;
+.dashboard {
+    background-color: #f0f0f0;
     display: flex;
     flex-direction: column;
-    align-items: left;
+    align-items: center;
     justify-content: center;
-    font-size: calc(12px + 2vmin);
+    font-size: calc(10px + 2vmin);
     color: rgb(43, 41, 41);
+    background-image:
+        url("../../images/welcome_bg.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: top;
+    width: '98%';
+    padding: '1%';
+    min-height: 50%;
+    height: 89vh;
 }
 
-.dashboard-formControl {
-    position: relative;
-    padding: 10px;
-    min-width: 150px;
-    max-width: 250px;
+.andares:hover .frenteCard {
+    background-color: #32CD32;
+    color: rgb(230, 72, 203);
+    font-weight: 600;
 }
 
-.dashboard-canvas-body {
-    background-color: #fafafa;
-    min-height: 8vh;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: left;
-    justify-content: center;
-    font-size: calc(12px + 2vmin);
-    color: rgb(43, 41, 41);
-}
-.dashboard-canvas {
-    background-color: #fafafa;
-    color: white;
-    position: relative;
-    padding: 10px;
-    width: 80%;
-    max-height: 60vmin;
+.andares:hover .ladoCard {
+    background-color: #32CD32;
 }

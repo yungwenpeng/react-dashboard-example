@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import useToken from '../../useToken';
+import useToken from '../../storages/useToken';
 import jwt_decode from "jwt-decode";
 import { styled } from "@mui/material/styles";
 import drawerImage from '../../images/siderbar_bg.png';

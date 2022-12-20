@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import useToken from '../../useToken';
+import useToken from '../../storages/useToken';
 import { api_url, websocket_url } from '../../environment/environment';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -40,8 +40,6 @@ function DeviceLatestTelemetry({ selectedDeviceId }) {
     const { token } = useToken();
     const [timeseriesKeys, setTimeseriesKeys] = useState(null);
     const websocket = useRef(null);
-    const [order, setOrder] = useState('asc');
-    const [orderBy, setOrderBy] = useState('timestamp');
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [lastestValue, setlastesValue] = useState();
@@ -105,12 +103,12 @@ function DeviceLatestTelemetry({ selectedDeviceId }) {
             if (timeseriesKeys !== null) {
                 timeseriesKeys.forEach(key => {
                     //console.log('key: ', key);
-                    let timestamp = JSON.parse(event.data).data[key] === undefined ?
-                        '' : JSON.parse(event.data).data[key][0][0];
+                    let timestamp = message[key] === undefined ?
+                        '' : message[key][0][0];
                     let newDate = new Date(timestamp * 1000 / 1000);
                     timestamp = newDate.toLocaleString("zh-TW", "zh-TW");
-                    let value = JSON.parse(event.data).data[key] === undefined ?
-                        '' : JSON.parse(event.data).data[key][0][1];
+                    let value = message[key] === undefined ?
+                        '' : message[key][0][1];
                     data.push(createData(timestamp, key, value));
                     //console.log(key, ' , last timestamp: ', timestamp);
                 });
@@ -132,7 +130,6 @@ function DeviceLatestTelemetry({ selectedDeviceId }) {
                             key={headCell.id}
                             align='left'
                             padding={headCell.disablePadding}
-                            sortDirection={orderBy === headCell.id ? order : false}
                             style={{ minWidth: headCell.minWidth }}
                         >
                             {headCell.label}

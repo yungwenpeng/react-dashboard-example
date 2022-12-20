@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { styled } from '@mui/material/styles';
 import PropTypes from 'prop-types';
-import useToken from '../../useToken';
+import useToken from '../../storages/useToken';
 import jwt_decode from "jwt-decode";
 import * as collections from '../../collections';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
@@ -11,7 +11,7 @@ import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
-import { api_url, websocket_url } from '../../environment/environment';
+import { api_url } from '../../environment/environment';
 import DeviceLatestTelemetry from './DeviceLatestTelemetry';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -44,7 +44,6 @@ const StyledBox = styled(collections.Box)(({ theme }) => ({
 
 function Devices({ setCurrentPath }) {
     const { token } = useToken();
-    const websocket = useRef(null);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(10);
     const [devices, setDevices] = useState(null);
