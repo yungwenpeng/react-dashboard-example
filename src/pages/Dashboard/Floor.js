@@ -4,7 +4,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import useToken from '../../storages/useToken';
 import { api_url, websocket_url } from '../../environment/environment';
 import welcomeImage from '../../images/welcome_bg.png';
+import BusinessIcon from '@mui/icons-material/Business';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import DeviceThermostatIcon from '@mui/icons-material/DeviceThermostat';
 import Grid from '@mui/material/Unstable_Grid2';
 import PropTypes from 'prop-types';
 import './Floor.css';
@@ -60,10 +62,16 @@ function Floor() {
     setShowTelemetry(true);
     setSelectedRoomId(room['id']);
   };
+
   const onMouseLeaveEvent = () => () => {
     //console.log('onMouseLeaveEvent');
     setShowTelemetry(false);
     setSelectedRoomId(null);
+  };
+
+  const entryRoom = (roomId) => () => {
+    //console.log(floorId, ', entryRoom: ', roomId);
+    roomId && navigate("/dashboard/" + floorId + "/" + roomId);
   };
 
   return (
@@ -75,7 +83,7 @@ function Floor() {
         backgroundRepeat: 'no-repeat',
       }}>
         <collections.IconButton sx={{ color: 'white', fontSize: 14, '&:hover': { fontSize: '150%', } }} onClick={() => navigate('/dashboard')}>
-          <collections.DashboardIcon /> Commercial Building
+          <BusinessIcon /> Commercial Building
         </collections.IconButton>
         <collections.IconButton sx={{ fontSize: 14, marginLeft: -2, "&.Mui-disabled": { color: 'white' } }} disabled>
           <ChevronRightIcon />
@@ -87,7 +95,7 @@ function Floor() {
         <Grid container spacing={2}>
           {relationsList && relationsList.map((item) => {
             return (
-              <Grid xs={6} key={'grid_' + item.id}>
+              <Grid xs={6} key={'grid_' + item.id} onClick={entryRoom(item.id)}>
                 <collections.Paper className='main-content' key={'main' + item.id}>
                   <collections.Box className="door-hor" key={'door_' + item.id}></collections.Box>
                   <collections.Box className="window-hor" key={'window_' + item.id}></collections.Box>
@@ -96,14 +104,16 @@ function Floor() {
                     <collections.Box className="blanket" key={'blanket_' + item.id} />
                     <collections.Box className="pillow" key={'pillow1_' + item.id} />
                     <collections.Box className="pillow" key={'pillow2_' + item.id} />
-                    <collections.Box
+                    <collections.Paper
                       className="bi-thermometer-half"
                       key={'sensor_' + item.id}
                       onMouseEnter={onMouseEnterEvent(item)}
                       onMouseLeave={onMouseLeaveEvent()}
                     >
-                      {(showTelemetry && selectedRoomId === item.id) && <FetchDeviceTelemetry selectedRoom={item} />}
-                    </collections.Box>
+                      {selectedRoomId === item.id && <DeviceThermostatIcon sx={{ margin: 0.5 }} />}
+                      {(showTelemetry && selectedRoomId === item.id) &&
+                        <FetchDeviceTelemetry selectedRoom={item} />}
+                    </collections.Paper>
                   </collections.Box>
                   <collections.Box className="bathroom" key={'pbathroom_' + item.id}>
                     <collections.Box className="door-hor" key={'door2_' + item.id} />
@@ -140,29 +150,22 @@ function FetchDeviceTelemetry({ selectedRoom }) {
   useEffect(() => {
     const getRoomInfo = async () => {
       let url = api_url + 'relations/info?fromId=' + selectedRoom.id + '&fromType=ASSET';
-      //console.log('getRoomInfo - url:', url);
-      try {
-        fetch(url, {
-          method: 'GET',
-          headers: new Headers({
-            'Accept': 'application/json',
-            'X-Authorization': 'Bearer ' + token
-          })
-        }).then(res => res.json())
-          .then(data => {
-            //console.log('getRoomInfo - data: ', data);
-            let roomDevices = [];
-            data.forEach((dev) => {
-              roomDevices.push(createData(dev['to']['id'], dev['toName']))
-            });
-            setDevices(roomDevices);
-            //console.log('getRoomInfo - roomDevices: ', roomDevices);
+      fetch(url, {
+        method: 'GET',
+        headers: new Headers({
+          'Accept': 'application/json',
+          'X-Authorization': 'Bearer ' + token
+        })
+      }).then(res => res.json())
+        .then(data => {
+          //console.log('getRoomInfo - data: ', data);
+          let roomDevices = [];
+          data.forEach((dev) => {
+            roomDevices.push(createData(dev['to']['id'], dev['toName']))
           });
-      } catch (err) {
-        console.log('getRoomInfo - error:', err.message);
-      } finally {
-        //console.log('getRoomInfo - finally');
-      }
+          setDevices(roomDevices);
+          //console.log('getRoomInfo - roomDevices: ', roomDevices);
+        });
     }
     getRoomInfo();
   }, [token, selectedRoom.id]);
@@ -245,16 +248,12 @@ function FetchDeviceTelemetry({ selectedRoom }) {
       <collections.Box className="overlay">
         {devices && devices.map((device) => {
           let deviceInfo = 'Device: ' + device.name;
-          {
-            timeseriesKeys && timeseriesKeys.forEach((key) => {
-              {
-                lastestValue && lastestValue.forEach(value => {
-                  if (key === value.key)
-                    deviceInfo = deviceInfo + "\n" + key + ": " + value.value + "\n";
-                })
-              }
+          timeseriesKeys && timeseriesKeys.forEach((key) => {
+            lastestValue && lastestValue.forEach(value => {
+              if (key === value.key)
+                deviceInfo = deviceInfo + "\n" + key + ": " + value.value + "\n";
             })
-          }
+          })
           return (deviceInfo)
         })
         }

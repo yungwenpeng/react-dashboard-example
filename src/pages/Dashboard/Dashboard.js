@@ -92,6 +92,7 @@ function Dashboard({ setCurrentPath }) {
           transform: 'skewX(-45deg)',
           textAlign: 'center',
           fontWeight: 'bold',
+          fontSize:20,
           color: 'white'
         }}>
           Commercial Building

@@ -13,6 +13,7 @@ const Home = lazy(() => import('./pages/Home/Home'));
 const Dashboard = lazy(() => import('./pages/Dashboard/Dashboard'));
 const Devices = lazy(() => import('./pages/Devices/Devices'));
 const Floor = lazy(() => import('./pages/Dashboard/Floor'));
+const Room = lazy(() => import('./pages/Dashboard/Room'));
 
 function App() {
 
@@ -67,6 +68,7 @@ function App() {
           <Route path="/devices" element={<Devices setCurrentPath={setCurrentPath} />} />
           <Route path="/dashboard" element={<Dashboard setCurrentPath={setCurrentPath} />} />
           <Route path="/dashboard/:floorId" element={<Floor />} />
+          <Route path="/dashboard/:floorId/:RoomId" element={<Room />} />
         </Routes>
       </BrowserRouter>
     </Suspense>
