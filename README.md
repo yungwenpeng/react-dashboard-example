@@ -78,8 +78,15 @@ ThingsBoard : [Getting Started](https://thingsboard.io/docs/getting-started-guid
 ##  How to use  
 1. Modify serverConfig, api_url,and websocket_url in src/environment/environment.js  
 2. Modify fetchDeviceUrl pageSize parameter in src/components/Drawer/Drawer.js  
-2. $ npm install  
+3. $ npm install  
    $ npm start  
+4. Testing :  
+   $ npm test  
   
 ## Demo:  
 ![react-dashboard-example](react-dashboard-example.gif)  
+  
+## React Testing  
+refer to : [Testing Overview](https://reactjs.org/docs/testing.html)  
+Simple test:  
+![react-testig](react-testig.gif)  
