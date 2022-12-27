@@ -72,6 +72,7 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 ## Others  
 MUI [Components](https://mui.com/components/) : [Drawer](https://mui.com/components/drawers/), [Material icons](https://mui.com/components/material-icons/), [Select](https://mui.com/components/selects/), [Select API](https://mui.com/zh/api/select/)  
 Chart.js : [Line Chart](https://www.chartjs.org/docs/latest/samples/line/line.html#line-chart)  
+React Google Charts : [Line Chart](https://www.react-google-charts.com/examples/line-chart/)  
 ThingsBoard : [Getting Started](https://thingsboard.io/docs/getting-started-guides/helloworld/), [REST API](https://thingsboard.io/docs/reference/rest-api/), [Working with telemetry data](https://thingsboard.io/docs/user-guide/telemetry/)  
   
 ##  How to use  

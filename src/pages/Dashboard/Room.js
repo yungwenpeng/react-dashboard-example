@@ -1,7 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
 import welcomeImage from '../../images/welcome_bg.png';
-import uploadImage from '../../images/upload-image-icon.png';
 import mediumTemperature from '../../images/medium-temperature-icon.png';
 import highTemperature from '../../images/high-temperature-warn-icon.png';
 import humidityImage from '../../images/humidity-icon.png';
@@ -12,7 +11,7 @@ import AutoAwesomeMosaicIcon from '@mui/icons-material/AutoAwesomeMosaic';
 import Grid from '@mui/material/Unstable_Grid2';
 import * as collections from '../../collections';
 import useToken from '../../storages/useToken';
-import { api_url, websocket_url } from '../../environment/environment';
+import { api_url, websocket_url, default_uploadImage } from '../../environment/environment';
 import { Chart } from "react-google-charts";
 
 // Refer to https://developers.google.com/chart/interactive/docs/gallery/linechart#configuration-options
@@ -54,7 +53,7 @@ function Room() {
     const navigate = useNavigate();
     const maxLineChartCount = 12;
     const [lineChartData, setLineChartData] = useState(null);
-    
+    const [uploadFile, setUploadFile] = useState(null);
 
     // Fetch Room Name and Devices
     useEffect(() => {
@@ -94,10 +93,10 @@ function Room() {
         getRoomInfo();
     }, [token, RoomId]);
 
-    // Fetch device keys
+    // Fetch device keys & Shared attributes(photoImage)
     useEffect(() => {
         if (devices === null) return;
-        devices.forEach((device, index) => {
+        devices.forEach((device) => {
             let url = api_url + 'plugins/telemetry/DEVICE/' + device.id + '/keys/timeseries';
             fetch(url, {
                 method: 'GET',
@@ -109,6 +108,19 @@ function Room() {
                 .then(timeseriesKeys => {
                     //console.log('getDeviceKeys - timeseriesKeys: ', timeseriesKeys);
                     setTimeseriesKeys(timeseriesKeys);
+                });
+
+            let getAttrUrl = api_url + 'plugins/telemetry/DEVICE/' + device.id + '/values/attributes?keys=photoImage'
+            fetch(getAttrUrl, {
+                method: 'GET',
+                headers: new Headers({
+                    'Accept': 'application/json',
+                    'X-Authorization': 'Bearer ' + token
+                })
+            }).then(res => res.json())
+                .then(attributes => {
+                    //console.log('getDeviceKeys - attributes: ', attributes);
+                    attributes.length !== 0 && setUploadFile(attributes[0].value);
                 });
         });
     }, [token, devices]);
@@ -182,6 +194,40 @@ function Room() {
         };
     }, [token, devices, timeseriesKeys]);
 
+    const convertToBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const fileReader = new FileReader();
+            fileReader.readAsDataURL(file);
+            fileReader.onload = () => {
+                resolve(fileReader.result);
+            };
+            fileReader.onerror = (error) => {
+                reject(error);
+            };
+        });
+    };
+
+    const handleFileUpload = async (event) => {
+        const file = event.target.files[0];
+        //console.log('handleFileUpload - file:', file);
+        const base64 = await convertToBase64(file);
+        //console.log('handleFileUpload - file:', base64);
+        setUploadFile(base64);
+        var imageBase64 = { "photoImage": base64 }
+        let getAttrUrl = api_url + 'plugins/telemetry/' + devices[0].id + '/SHARED_SCOPE'
+        fetch(getAttrUrl, {
+            method: 'POST',
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-Authorization': 'Bearer ' + token
+            }),
+            body: JSON.stringify(imageBase64)
+        }).then((response) => {
+            console.log('handleFileUpload - saveDeviceAttributes: ', response);
+        });
+    };
+
     return (
         <>
             <collections.Paper sx={{
@@ -243,18 +289,36 @@ function Room() {
                     </Grid>
                     <Grid container spacing={3}>
                         <Grid xs={4}>
-                            <collections.Box
-                                sx={{
-                                    minWidth: '120px',
-                                    minHeight: '120px',
-                                    backgroundImage: `url(${uploadImage})`,
-                                    backgroundSize: 'contain',
-                                    backgroundRepeat: 'no-repeat',
-                                    backgroundPosition: '50% 50%',
-                                    alignItems: 'center'
-                                }}
-                                onClick={() => { console.log('pressImage') }}
-                            />
+                            <collections.Box sx={{ textAlign: 'center', }}>
+                                <collections.Button
+                                    sx={{
+                                        minWidth: '135px',
+                                        minHeight: '135px',
+                                        backgroundImage: uploadFile === null ?
+                                            `url(${default_uploadImage})` : `url(${uploadFile})`,
+                                        backgroundSize: 'contain',
+                                        backgroundRepeat: 'no-repeat',
+                                        backgroundPosition: '50% 50%',
+                                        backgroundColor: 'transparent',
+                                        border: 'none',
+                                        borderRadius: '30%',
+                                        ":hover": {
+                                            backgroundColor: 'transparent',
+                                            border: 'none',
+                                        },
+                                    }}
+                                    variant="contained"
+                                    component="label"
+                                >
+                                    <input type="file"
+                                        label="Image"
+                                        name="uploadFile"
+                                        accept=".jpeg, .png, .jpg"
+                                        hidden
+                                        onChange={handleFileUpload}
+                                    />
+                                </collections.Button>
+                            </collections.Box>
                         </Grid>
                         <Grid xs={4}>
                             {lastestValue && lastestValue.map((value, index) => {
